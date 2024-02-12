@@ -1,16 +1,12 @@
 package glob
 
 import (
-	"os"
-
-	"github.com/matthewmueller/go-glob/internal/fastwalk"
+	"io/fs"
+	"path/filepath"
 )
 
-// WalkFunc is the walk function for glob.Walk
-type WalkFunc func(path string, mode os.FileMode) error
-
 // Walk the files
-func Walk(glob string, fn WalkFunc) error {
+func Walk(glob string, fn fs.WalkDirFunc) error {
 	matcher, err := Compile(glob)
 	if err != nil {
 		return err
@@ -20,10 +16,10 @@ func Walk(glob string, fn WalkFunc) error {
 	base := Base(glob)
 
 	// start walking, matching on the glob
-	return fastwalk.Walk(base, func(path string, mode os.FileMode) error {
+	return filepath.WalkDir(base, func(path string, de fs.DirEntry, err error) error {
 		if !matcher.Match(path) {
 			return nil
 		}
-		return fn(path, mode)
+		return fn(path, de, err)
 	})
 }

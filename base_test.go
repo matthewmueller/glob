@@ -3,67 +3,59 @@ package glob_test
 import (
 	"testing"
 
-	"github.com/matthewmueller/go-glob"
-	"github.com/tj/assert"
+	"github.com/matryer/is"
+	"github.com/matthewmueller/glob"
 )
 
 func TestBase(t *testing.T) {
-	tests := []struct {
-		input    string
-		expected string
-	}{
-		// should strip glob magic to return parent path
-		{".", "."},
-		{".*", "."},
-		{"a/*/b", "a"},
-		{"a*/.*/b", "."},
-		{"*/a/b/c", "."},
-		{"*", "."},
-		{"*/", "."},
-		{"*/*", "."},
-		{"*/*/", "."},
-		{"**", "."},
-		{"**/", "."},
-		{"**/*", "."},
-		{"**/*/", "."},
-		{"/*.js", "/"},
-		{"*.js", "."},
-		{"**/*.js", "."},
-		{"{a,b}", "."},
-		{"/{a,b}", "/"},
-		{"/{a,b}/", "/"},
-		{"{a,b}", "."},
-		{"/{a,b}", "/"},
-		{"./{a,b}", "."},
-		{"path/to/*.js", "path/to"},
-		{"/root/path/to/*.js", "/root/path/to"},
-		{"chapter/foo [bar]/", "chapter"},
-		{"path/[a-z]", "path"},
-		{"[a-z]", "."},
-		{"path/{to,from}", "path"},
-		// {"path/!/foo", "path/!"},
-		{"path/?/foo", "path"},
-		// {"path/+/foo", "path/+"},
-		{"path/*/foo", "path"},
-		// {"path/@/foo", "path/@"},
-		// {"path/!/foo/", "path/!/foo"},
-		// {"path/?/foo/", "path"},
-		// {"path/+/foo/", "path/+/foo"},
-		// {"path/*/foo/", "path"},
-		// {"path/@/foo/", "path/@/foo"},
-		{"path/**/*", "path"},
-		{"path/**/subdir/foo.*", "path"},
-		{"path/subdir/**/foo.js", "path/subdir"},
-		// {"path/!subdir/foo.js", "path/!subdir"},
-		{"path/{foo,bar}/", "path"},
-
-		// should respect escaped characters
+	is := is.New(t)
+	test := func(input, expect string) {
+		is.Helper()
+		is.Equal(glob.Base(input), expect)
 	}
-
-	for _, test := range tests {
-		t.Run(test.input, func(t *testing.T) {
-			base := glob.Base(test.input)
-			assert.Equal(t, test.expected, base)
-		})
-	}
+	test(".", ".")
+	test(".*", ".")
+	test("a/*/b", "a")
+	test("a*/.*/b", ".")
+	test("*/a/b/c", ".")
+	test("*", ".")
+	test("*/", ".")
+	test("*/*", ".")
+	test("*/*/", ".")
+	test("**", ".")
+	test("**/", ".")
+	test("**/*", ".")
+	test("**/*/", ".")
+	test("/*.js", "/")
+	test("*.js", ".")
+	test("**/*.js", ".")
+	test("{a,b}", ".")
+	test("/{a,b}", "/")
+	test("/{a,b}/", "/")
+	test("{a,b}", ".")
+	test("/{a,b}", "/")
+	test("./{a,b}", ".")
+	test("path/to/*.js", "path/to")
+	test("/root/path/to/*.js", "/root/path/to")
+	test("chapter/foo [bar]/", "chapter")
+	test("path/[a-z]", "path")
+	test("[a-z]", ".")
+	test("path/{to,from}", "path")
+	test("path/!/foo", "path/!/foo")
+	test("path/?/foo", "path")
+	test("path/+/foo", "path/+/foo")
+	test("path/*/foo", "path")
+	test("path/@/foo", "path/@/foo")
+	test("path/!/foo/", "path/!/foo")
+	test("path/?/foo/", "path")
+	test("path/+/foo/", "path/+/foo")
+	test("path/*/foo/", "path")
+	test("path/@/foo/", "path/@/foo")
+	test("path/**/*", "path")
+	test("path/**/subdir/foo.*", "path")
+	test("path/subdir/**/foo.js", "path/subdir")
+	test("path/!subdir/foo.js", "path/!subdir/foo.js")
+	test("path/{foo,bar}/", "path")
+	test("{controller/**.go,view/**}", ".")
+	test("{controller/**.go,view/**}", ".")
 }

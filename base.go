@@ -7,11 +7,11 @@ import (
 	"github.com/gobwas/glob/syntax/lexer"
 )
 
-var sep = string(filepath.Separator)
+const sep = string(filepath.Separator)
 
 // Base gets the non-magical part of the glob
-func Base(str string) string {
-	parts := strings.Split(str, sep)
+func Base(pattern string) string {
+	parts := strings.Split(pattern, sep)
 	var base []string
 outer:
 	for _, part := range parts {
@@ -35,5 +35,5 @@ outer:
 	} else if len(base) == 1 && base[0] == "" {
 		return sep
 	}
-	return strings.Join(base, sep)
+	return filepath.Clean(strings.Join(base, sep))
 }
