@@ -1,6 +1,7 @@
 package glob_test
 
 import (
+	"fmt"
 	"path/filepath"
 	"testing"
 
@@ -28,4 +29,20 @@ func TestMatch(t *testing.T) {
 	is.Equal(files[2], filepath.Join(dir, "qux.markdown"))
 	is.Equal(files[3], filepath.Join(dir, "sub/deep/topic.md"))
 	is.Equal(files[4], filepath.Join(dir, "sub/topic.md"))
+}
+
+func ExampleMatch() {
+	files, err := glob.Match("[A-Z]*.md")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, file := range files {
+		fmt.Println(file)
+	}
+
+	// Output:
+	// Changelog.md
+	// License.md
+	// Readme.md
 }
