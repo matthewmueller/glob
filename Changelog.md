@@ -1,3 +1,7 @@
+# 0.0.3 / 2024-03-16
+
+- incorporate multiple base dir support in walk
+
 # 0.0.2 / 2024-02-19
 
 - add glob.WalkFS and glob.MatchFS
