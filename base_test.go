@@ -1,17 +1,17 @@
-package glob_test
+package glob
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/matryer/is"
-	"github.com/matthewmueller/glob"
 )
 
 func TestBase(t *testing.T) {
 	is := is.New(t)
 	test := func(input, expect string) {
 		is.Helper()
-		is.Equal(glob.Base(input), expect)
+		is.Equal(base(input), expect)
 	}
 	test(".", ".")
 	test(".*", ".")
@@ -57,5 +57,28 @@ func TestBase(t *testing.T) {
 	test("path/!subdir/foo.js", "path/!subdir/foo.js")
 	test("path/{foo,bar}/", "path")
 	test("{controller/**.go,view/**}", ".")
-	test("{controller/**.go,view/**}", ".")
+}
+
+func TestBases(t *testing.T) {
+	is := is.New(t)
+	test := func(input string, expects ...string) {
+		is.Helper()
+		var dirs []string
+		patterns, err := expand(input)
+		if err != nil {
+			is.True(len(expects) > 0) // missing expect
+			is.Equal(err.Error(), expects[0])
+			return
+		}
+		for _, pattern := range patterns {
+			dirs = append(dirs, base(pattern))
+		}
+		dirs = unique(dirs)
+		is.Equal(strings.Join(dirs, ", "), strings.Join(expects, ", "))
+	}
+	test("path/{foo,bar}/", "path/foo", "path/bar")
+	test("path/{to,from}", "path/to", "path/from")
+	test("path/*/{to,from}", "path")
+	test("{controller/**.go,view/**}", "controller, view")
+	test("{controller/**.go,controller/**}", "controller")
 }

@@ -27,9 +27,9 @@ func TestMatch(t *testing.T) {
 	is.Equal(len(files), 5)
 	is.Equal(files[0], filepath.Join(dir, "bar.md"))
 	is.Equal(files[1], filepath.Join(dir, "foo.md"))
-	is.Equal(files[2], filepath.Join(dir, "qux.markdown"))
-	is.Equal(files[3], filepath.Join(dir, "sub/deep/topic.md"))
-	is.Equal(files[4], filepath.Join(dir, "sub/topic.md"))
+	is.Equal(files[2], filepath.Join(dir, "sub/deep/topic.md"))
+	is.Equal(files[3], filepath.Join(dir, "sub/topic.md"))
+	is.Equal(files[4], filepath.Join(dir, "qux.markdown"))
 }
 
 func TestMatchFS(t *testing.T) {
@@ -48,9 +48,9 @@ func TestMatchFS(t *testing.T) {
 	is.Equal(len(files), 5)
 	is.Equal(files[0], "bar.md")
 	is.Equal(files[1], "foo.md")
-	is.Equal(files[2], "qux.markdown")
-	is.Equal(files[3], "sub/deep/topic.md")
-	is.Equal(files[4], "sub/topic.md")
+	is.Equal(files[2], "sub/deep/topic.md")
+	is.Equal(files[3], "sub/topic.md")
+	is.Equal(files[4], "qux.markdown")
 }
 
 func ExampleMatch() {

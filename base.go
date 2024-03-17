@@ -9,8 +9,8 @@ import (
 
 const sep = string(filepath.Separator)
 
-// Base gets the non-magical part of the glob
-func Base(pattern string) string {
+// base gets the non-magical part of the glob
+func base(pattern string) string {
 	parts := strings.Split(pattern, sep)
 	var base []string
 outer:

@@ -17,7 +17,7 @@ func expand(str string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return orderedSet(patterns...), nil
+	return unique(patterns), nil
 }
 
 func expandNode(node *ast.Node) (patterns []string, err error) {
@@ -84,17 +84,4 @@ func expandNode(node *ast.Node) (patterns []string, err error) {
 		patterns = append(patterns, prefix)
 	}
 	return patterns, nil
-}
-
-func orderedSet(list ...string) []string {
-	seen := map[string]struct{}{}
-	set := make([]string, 0, len(list))
-	for _, item := range list {
-		if _, ok := seen[item]; ok {
-			continue
-		}
-		seen[item] = struct{}{}
-		set = append(set, item)
-	}
-	return set
 }

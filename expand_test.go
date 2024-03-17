@@ -60,7 +60,6 @@ func TestExpand(t *testing.T) {
 	test("path/!subdir/foo.js", "path/!subdir/foo.js")
 	test("path/{foo,bar}/", "path/foo/", "path/bar/")
 	test("{controller/**.go,view/**}", "controller/**.go", "view/**")
-	test("{controller/**.go,view/**}", "controller/**.go", "view/**")
 	test("{{controller,view}/**.go,view/**}", "controller/**.go", "view/**.go", "view/**")
 	test("{controller,controller}", "controller")
 	// TODO support: test("{a,b}/{c,d}", "a/c", "a/d", "b/c", "b/d")

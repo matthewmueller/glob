@@ -4,7 +4,7 @@ import "github.com/gobwas/glob"
 
 type Matcher = glob.Glob
 
-// Comple a pattern into a matcher
+// Comple a glob pattern into a matcher
 func Compile(pattern string) (Matcher, error) {
 	// Expand patterns like {a,b} into multiple globs a & b. This avoids an
 	// infinite loop described in this comment:
@@ -13,22 +13,27 @@ func Compile(pattern string) (Matcher, error) {
 	if err != nil {
 		return nil, err
 	}
-	globs := make(globs, len(patterns))
+	matchers := make(matchers, len(patterns))
 	for i, pattern := range patterns {
-		glob, err := glob.Compile(pattern)
+		matcher, err := compile(pattern)
 		if err != nil {
 			return nil, err
 		}
-		globs[i] = glob
+		matchers[i] = matcher
 	}
-	return globs, nil
+	return matchers, nil
 }
 
-type globs []glob.Glob
+// compile a glob pattern into a matcher
+func compile(pattern string) (Matcher, error) {
+	return glob.Compile(pattern)
+}
 
-func (globs globs) Match(path string) bool {
-	for _, glob := range globs {
-		if glob.Match(path) {
+type matchers []glob.Glob
+
+func (matchers matchers) Match(path string) bool {
+	for _, matcher := range matchers {
+		if matcher.Match(path) {
 			return true
 		}
 	}
