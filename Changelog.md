@@ -1,3 +1,8 @@
+# 0.0.4 / 2024-08-22
+
+- expose glob.Base
+- support passing in file separators
+
 # 0.0.3 / 2024-03-16
 
 - incorporate multiple base dir support in walk
