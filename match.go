@@ -10,6 +10,8 @@ func Match(glob string) (matches []string, err error) {
 	err = Walk(glob, func(path string, de fs.DirEntry, err error) error {
 		if err != nil {
 			return err
+		} else if de.IsDir() {
+			return nil
 		}
 		matches = append(matches, path)
 		return nil
@@ -22,6 +24,8 @@ func MatchFS(fsys fs.FS, glob string) (matches []string, err error) {
 	err = WalkFS(fsys, glob, func(path string, de fs.DirEntry, err error) error {
 		if err != nil {
 			return err
+		} else if de.IsDir() {
+			return nil
 		}
 		matches = append(matches, path)
 		return nil

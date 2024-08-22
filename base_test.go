@@ -11,7 +11,7 @@ func TestBase(t *testing.T) {
 	is := is.New(t)
 	test := func(input, expect string) {
 		is.Helper()
-		is.Equal(base(input), expect)
+		is.Equal(Base(input), expect)
 	}
 	test(".", ".")
 	test(".*", ".")
@@ -71,7 +71,7 @@ func TestBases(t *testing.T) {
 			return
 		}
 		for _, pattern := range patterns {
-			dirs = append(dirs, base(pattern))
+			dirs = append(dirs, Base(pattern))
 		}
 		dirs = unique(dirs)
 		is.Equal(strings.Join(dirs, ", "), strings.Join(expects, ", "))

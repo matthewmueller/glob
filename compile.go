@@ -1,11 +1,13 @@
 package glob
 
-import "github.com/gobwas/glob"
+import (
+	"github.com/gobwas/glob"
+)
 
 type Matcher = glob.Glob
 
 // Comple a glob pattern into a matcher
-func Compile(pattern string) (Matcher, error) {
+func Compile(pattern string, separators ...rune) (Matcher, error) {
 	// Expand patterns like {a,b} into multiple globs a & b. This avoids an
 	// infinite loop described in this comment:
 	// https://github.com/gobwas/glob/issues/50#issuecomment-1330182417
@@ -15,7 +17,7 @@ func Compile(pattern string) (Matcher, error) {
 	}
 	matchers := make(matchers, len(patterns))
 	for i, pattern := range patterns {
-		matcher, err := compile(pattern)
+		matcher, err := compile(pattern, separators...)
 		if err != nil {
 			return nil, err
 		}
@@ -25,8 +27,8 @@ func Compile(pattern string) (Matcher, error) {
 }
 
 // compile a glob pattern into a matcher
-func compile(pattern string) (Matcher, error) {
-	return glob.Compile(pattern)
+func compile(pattern string, separators ...rune) (Matcher, error) {
+	return glob.Compile(pattern, separators...)
 }
 
 type matchers []glob.Glob

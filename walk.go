@@ -14,9 +14,9 @@ func Walk(pattern string, fn fs.WalkDirFunc) error {
 	}
 	for _, pattern := range patterns {
 		// Get the base directory (non-glob part of the pattern)
-		dir := base(pattern)
+		dir := Base(pattern)
 		// Compile the pattern into a matcher
-		matcher, err := compile(pattern)
+		matcher, err := compile(pattern, filepath.Separator)
 		if err != nil {
 			return err
 		}
@@ -42,9 +42,9 @@ func WalkFS(fsys fs.FS, pattern string, fn fs.WalkDirFunc) error {
 	}
 	for _, pattern := range patterns {
 		// Get the base directory (non-glob part of the pattern)
-		dir := base(pattern)
+		dir := Base(pattern)
 		// Compile the pattern into a matcher
-		matcher, err := compile(pattern)
+		matcher, err := compile(pattern, '/')
 		if err != nil {
 			return err
 		}
