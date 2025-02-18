@@ -62,5 +62,7 @@ func TestExpand(t *testing.T) {
 	test("{controller/**.go,view/**}", "controller/**.go", "view/**")
 	test("{{controller,view}/**.go,view/**}", "controller/**.go", "view/**.go", "view/**")
 	test("{controller,controller}", "controller")
-	// TODO support: test("{a,b}/{c,d}", "a/c", "a/d", "b/c", "b/d")
+	test("**.{md,markdown}", "**.md", "**.markdown")
+	test(`{**,*}/*.svelte{,.js}`, "**/*.svelte", "*/*.svelte", "**/*.svelte.js", "*/*.svelte.js")
+	test("{a,b}/{c,d}", "a/c", "b/c", "a/d", "b/d")
 }

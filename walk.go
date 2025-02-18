@@ -12,6 +12,7 @@ func Walk(pattern string, fn fs.WalkDirFunc) error {
 	if err != nil {
 		return err
 	}
+	seen := make(map[string]struct{})
 	for _, pattern := range patterns {
 		// Get the base directory (non-glob part of the pattern)
 		dir := Base(pattern)
@@ -25,7 +26,12 @@ func Walk(pattern string, fn fs.WalkDirFunc) error {
 			if !matcher.Match(path) {
 				return nil
 			}
-			return fn(path, de, err)
+			if _, ok := seen[path]; ok {
+				return nil
+			}
+			err = fn(path, de, err)
+			seen[path] = struct{}{}
+			return err
 		}); err != nil {
 			return err
 		}
@@ -40,6 +46,7 @@ func WalkFS(fsys fs.FS, pattern string, fn fs.WalkDirFunc) error {
 	if err != nil {
 		return err
 	}
+	seen := make(map[string]struct{})
 	for _, pattern := range patterns {
 		// Get the base directory (non-glob part of the pattern)
 		dir := Base(pattern)
@@ -53,7 +60,12 @@ func WalkFS(fsys fs.FS, pattern string, fn fs.WalkDirFunc) error {
 			if !matcher.Match(path) {
 				return nil
 			}
-			return fn(path, de, err)
+			if _, ok := seen[path]; ok {
+				return nil
+			}
+			err = fn(path, de, err)
+			seen[path] = struct{}{}
+			return err
 		}); err != nil {
 			return err
 		}

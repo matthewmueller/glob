@@ -67,15 +67,23 @@ func expandNode(node *ast.Node) (patterns []string, err error) {
 		case ast.KindSingle:
 			write("?")
 		case ast.KindAnyOf:
+			var newPatterns []string
 			for _, child := range child.Children {
 				results, err := expandNode(child)
 				if err != nil {
 					return nil, err
 				}
 				for _, result := range results {
-					patterns = append(patterns, prefix+result)
+					if len(patterns) == 0 {
+						newPatterns = append(newPatterns, prefix+result)
+					} else {
+						for _, pattern := range patterns {
+							newPatterns = append(newPatterns, pattern+result)
+						}
+					}
 				}
 			}
+			patterns = newPatterns
 		default:
 			return nil, fmt.Errorf("unknown node kind: %v", child.Kind)
 		}

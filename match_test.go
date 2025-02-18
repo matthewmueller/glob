@@ -53,6 +53,31 @@ func TestMatchFS(t *testing.T) {
 	is.Equal(files[4], "qux.markdown")
 }
 
+func TestNested(t *testing.T) {
+	is := is.New(t)
+	fsys := fstest.MapFS{
+		"App.svelte":               &fstest.MapFile{Data: []byte("foo")},
+		"lib/App.svelte":           &fstest.MapFile{Data: []byte("foo")},
+		"lib/src/App.svelte":       &fstest.MapFile{Data: []byte("foo")},
+		"lib/src/shared.svelte.js": &fstest.MapFile{Data: []byte("foo")},
+		"lib/src/shared.js":        &fstest.MapFile{Data: []byte("foo")},
+	}
+	files, err := glob.MatchFS(fsys, "**.svelte{,.js}")
+	is.NoErr(err)
+	is.Equal(len(files), 4)
+	is.Equal(files[0], "App.svelte")
+	is.Equal(files[1], "lib/App.svelte")
+	is.Equal(files[2], "lib/src/App.svelte")
+	is.Equal(files[3], "lib/src/shared.svelte.js")
+
+	files, err = glob.MatchFS(fsys, "{**,*}/*.svelte{,.js}")
+	is.NoErr(err)
+	is.Equal(len(files), 3)
+	is.Equal(files[0], "lib/App.svelte")
+	is.Equal(files[1], "lib/src/App.svelte")
+	is.Equal(files[2], "lib/src/shared.svelte.js")
+}
+
 func ExampleMatch() {
 	files, err := glob.Match("[A-Z]*.md")
 	if err != nil {
