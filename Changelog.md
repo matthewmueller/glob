@@ -1,3 +1,7 @@
+# 0.0.5 / 2025-02-17
+
+- fix expand to support multiple patterns
+
 # 0.0.4 / 2024-08-22
 
 - expose glob.Base
