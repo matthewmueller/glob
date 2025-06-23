@@ -26,7 +26,7 @@ import (
 )
 
 func main() {
-	files, _ := glob.Match("[A-Z]*.md")
+	files, _ := glob.Glob("[A-Z]*.md")
 	for _, file := range files {
 		fmt.Println(file)
 	}
