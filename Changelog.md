@@ -1,3 +1,12 @@
+# 0.1.0 / 2025-06-23
+
+- large breaking change
+- separated into globfs and glob.
+- renamed: match to glob
+- added: is, match
+- most apis now accept multiple patterns
+- smarter file walking based on greatest common ancestor
+
 # 0.0.5 / 2025-02-17
 
 - fix expand to support multiple patterns
