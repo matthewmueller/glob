@@ -1,0 +1,56 @@
+package internal_test
+
+import (
+	"testing"
+
+	"github.com/matryer/is"
+	"github.com/matthewmueller/glob/internal"
+)
+
+func TestIs(t *testing.T) {
+	is := is.New(t)
+	is.Equal(internal.Is("."), false)
+	is.Equal(internal.Is(".*"), true)
+	is.Equal(internal.Is("a/*/b"), true)
+	is.Equal(internal.Is("a*/.*/b"), true)
+	is.Equal(internal.Is("*/a/b/c"), true)
+	is.Equal(internal.Is("*"), true)
+	is.Equal(internal.Is("*/"), true)
+	is.Equal(internal.Is("*/*"), true)
+	is.Equal(internal.Is("*/*/"), true)
+	is.Equal(internal.Is("**"), true)
+	is.Equal(internal.Is("**/"), true)
+	is.Equal(internal.Is("**/*"), true)
+	is.Equal(internal.Is("**/*/"), true)
+	is.Equal(internal.Is("/*.js"), true)
+	is.Equal(internal.Is("*.js"), true)
+	is.Equal(internal.Is("**/*.js"), true)
+	is.Equal(internal.Is("{a,b}"), true)
+	is.Equal(internal.Is("/{a,b}"), true)
+	is.Equal(internal.Is("/{a,b}/"), true)
+	is.Equal(internal.Is("{a,b}"), true)
+	is.Equal(internal.Is("/{a,b}"), true)
+	is.Equal(internal.Is("./{a,b}"), true)
+	is.Equal(internal.Is("path/to/*.js"), true)
+	is.Equal(internal.Is("/root/path/to/*.js"), true)
+	is.Equal(internal.Is("chapter/foo [bar]/"), true)
+	is.Equal(internal.Is("path/[a-z]"), true)
+	is.Equal(internal.Is("[a-z]"), true)
+	is.Equal(internal.Is("path/{to,from}"), true)
+	is.Equal(internal.Is("path/!/foo"), false)
+	is.Equal(internal.Is("path/?/foo"), true)
+	is.Equal(internal.Is("path/+/foo"), false)
+	is.Equal(internal.Is("path/*/foo"), true)
+	is.Equal(internal.Is("path/@/foo"), false)
+	is.Equal(internal.Is("path/!/foo/"), false)
+	is.Equal(internal.Is("path/?/foo/"), true)
+	is.Equal(internal.Is("path/+/foo/"), false)
+	is.Equal(internal.Is("path/*/foo/"), true)
+	is.Equal(internal.Is("path/@/foo/"), false)
+	is.Equal(internal.Is("path/**/*"), true)
+	is.Equal(internal.Is("path/**/subdir/foo.*"), true)
+	is.Equal(internal.Is("path/subdir/**/foo.js"), true)
+	is.Equal(internal.Is("path/!subdir/foo.js"), false)
+	is.Equal(internal.Is("path/{foo,bar}/"), true)
+	is.Equal(internal.Is("{controller/**.go,view/**}"), true)
+}

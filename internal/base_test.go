@@ -1,18 +1,17 @@
-package glob_test
+package internal_test
 
 import (
-	"path/filepath"
 	"testing"
 
 	"github.com/matryer/is"
-	"github.com/matthewmueller/glob"
+	"github.com/matthewmueller/glob/internal"
 )
 
 func TestBase(t *testing.T) {
 	is := is.New(t)
 	test := func(input, expect string) {
 		is.Helper()
-		is.Equal(glob.Base(filepath.FromSlash(input)), expect)
+		is.Equal(internal.Base('/', input), expect)
 	}
 	test(".", ".")
 	test(".*", ".")
@@ -62,9 +61,9 @@ func TestBase(t *testing.T) {
 
 func TestMultiple(t *testing.T) {
 	is := is.New(t)
-	is.Equal(glob.Base("path/*/foo/", "path/*/bar/"), "path")
-	is.Equal(glob.Base("path/*/foo/", "bar/*/bar/"), ".")
-	is.Equal(glob.Base("path/foo/", "path/foo/"), "path/foo")
-	is.Equal(glob.Base("path/foo/", "bar/foo/"), ".")
-	is.Equal(glob.Base("path/foo/*", "path/foo/*"), "path/foo")
+	is.Equal(internal.Base('/', "path/*/foo/", "path/*/bar/"), "path")
+	is.Equal(internal.Base('/', "path/*/foo/", "bar/*/bar/"), ".")
+	is.Equal(internal.Base('/', "path/foo/", "path/foo/"), "path/foo")
+	is.Equal(internal.Base('/', "path/foo/", "bar/foo/"), ".")
+	is.Equal(internal.Base('/', "path/foo/*", "path/foo/*"), "path/foo")
 }

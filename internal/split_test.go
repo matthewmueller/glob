@@ -1,16 +1,17 @@
-package glob
+package internal_test
 
 import (
 	"testing"
 
 	"github.com/matryer/is"
+	"github.com/matthewmueller/glob/internal"
 )
 
-func TestExpand(t *testing.T) {
+func TestSplit(t *testing.T) {
 	is := is.New(t)
 	test := func(input string, expect ...string) {
 		is.Helper()
-		actual, err := expand(input)
+		actual, err := internal.Split(input)
 		if err != nil {
 			is.True(len(expect) > 0) // missing expect
 			is.Equal(err.Error(), expect[0])

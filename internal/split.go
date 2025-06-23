@@ -1,4 +1,4 @@
-package glob
+package internal
 
 import (
 	"fmt"
@@ -7,20 +7,20 @@ import (
 	"github.com/gobwas/glob/syntax/lexer"
 )
 
-func expand(str string) ([]string, error) {
+func Split(str string) ([]string, error) {
 	lex := lexer.NewLexer(str)
 	node, err := ast.Parse(lex)
 	if err != nil {
 		return nil, err
 	}
-	patterns, err := expandNode(node)
+	patterns, err := splitNode(node)
 	if err != nil {
 		return nil, err
 	}
 	return unique(patterns), nil
 }
 
-func expandNode(node *ast.Node) (patterns []string, err error) {
+func splitNode(node *ast.Node) (patterns []string, err error) {
 	prefix := ""
 	write := func(value string) {
 		prefix += value
@@ -69,7 +69,7 @@ func expandNode(node *ast.Node) (patterns []string, err error) {
 		case ast.KindAnyOf:
 			var newPatterns []string
 			for _, child := range child.Children {
-				results, err := expandNode(child)
+				results, err := splitNode(child)
 				if err != nil {
 					return nil, err
 				}

@@ -1,4 +1,4 @@
-package glob
+package internal
 
 func unique(list []string) []string {
 	seen := map[string]struct{}{}

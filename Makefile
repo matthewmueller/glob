@@ -3,6 +3,7 @@ precommit: test
 test:
 	@ go vet ./...
 	@ go run honnef.co/go/tools/cmd/staticcheck@latest ./...
+	@ go run golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest -fix -test ./...
 	@ go test -race ./...
 
 install: test
@@ -18,4 +19,4 @@ release: test
 	@ git commit -am "Release v$(VERSION)"
 	@ git tag "v$(VERSION)"
 	@ git push origin main "v$(VERSION)"
-	@ go run github.com/cli/cli/v2/cmd/gh@5023b61 release create --generate-notes "v$(VERSION)"
+	@ go run github.com/cli/cli/v2/cmd/gh@latest release create --generate-notes "v$(VERSION)"

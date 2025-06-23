@@ -1,4 +1,4 @@
-package glob
+package globfs
 
 import (
 	"path/filepath"
