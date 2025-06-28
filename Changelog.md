@@ -1,3 +1,7 @@
+# 0.1.1 / 2025-06-28
+
+- fix panic due to yielding after range function exits
+
 # 0.1.0 / 2025-06-23
 
 - large breaking change
