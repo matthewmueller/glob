@@ -38,7 +38,7 @@ func Walk(dir string, patterns ...string) iter.Seq2[error, string] {
 		if err := filepath.WalkDir(baseDir, func(path string, de fs.DirEntry, err error) error {
 			if err != nil {
 				if !yield(err, "") {
-					return err
+					return fs.SkipAll
 				}
 				return nil
 			}
@@ -46,7 +46,7 @@ func Walk(dir string, patterns ...string) iter.Seq2[error, string] {
 				return nil
 			}
 			if !yield(nil, path) {
-				return nil
+				return fs.SkipAll
 			}
 			return nil
 		}); err != nil {
