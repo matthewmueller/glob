@@ -1,7 +1,7 @@
-# Unreleased
+# 0.2.0 / 2026-07-13
 
-- breaking: `Glob` and `Walk` now accept complete patterns and derive the common directory to walk
-- breaking: `Walk` now yields the matching path before the error
+- **BREAKING**: `Glob` and `Walk` now accept a list of patterns instead of a directory
+  then list. This is the same signature as `filepath.Glob`.
 
 # 0.1.1 / 2025-06-28
 
