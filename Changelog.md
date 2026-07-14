@@ -1,3 +1,8 @@
+# Unreleased
+
+- breaking: `Glob` and `Walk` now accept complete patterns and derive the common directory to walk
+- breaking: `Walk` now yields the matching path before the error
+
 # 0.1.1 / 2025-06-28
 
 - fix panic due to yielding after range function exits

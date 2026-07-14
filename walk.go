@@ -8,27 +8,36 @@ import (
 	"github.com/matthewmueller/glob/internal"
 )
 
-// Walk a directory, matching on the patterns
-func Walk(dir string, patterns ...string) iter.Seq2[error, string] {
-	return func(yield func(error, string) bool) {
+// Walk yields each matching path followed by a nil error. Errors are yielded
+// with an empty path. It derives the directory to walk from the non-pattern
+// prefix shared by the complete patterns. Empty patterns are ignored, and no
+// patterns yields nothing.
+func Walk(patterns ...string) iter.Seq2[string, error] {
+	return func(yield func(string, error) bool) {
 		var all []string
 		for _, pattern := range patterns {
+			if pattern == "" {
+				continue
+			}
 			subpatterns, err := internal.Split(pattern)
 			if err != nil {
-				if !yield(err, "") {
+				if !yield("", err) {
 					return
 				}
 				continue
 			}
 			for _, subpattern := range subpatterns {
-				all = append(all, filepath.Join(dir, subpattern))
+				all = append(all, filepath.Clean(subpattern))
 			}
+		}
+		if len(all) == 0 {
+			return
 		}
 
 		// Compile the patterns into a single matcher
 		matcher, err := Compile(all...)
 		if err != nil {
-			yield(err, "")
+			yield("", err)
 			return
 		}
 
@@ -37,7 +46,7 @@ func Walk(dir string, patterns ...string) iter.Seq2[error, string] {
 
 		if err := filepath.WalkDir(baseDir, func(path string, de fs.DirEntry, err error) error {
 			if err != nil {
-				if !yield(err, "") {
+				if !yield("", err) {
 					return fs.SkipAll
 				}
 				return nil
@@ -45,12 +54,12 @@ func Walk(dir string, patterns ...string) iter.Seq2[error, string] {
 			if !matcher.Match(path) {
 				return nil
 			}
-			if !yield(nil, path) {
+			if !yield(path, nil) {
 				return fs.SkipAll
 			}
 			return nil
 		}); err != nil {
-			if !yield(err, "") {
+			if !yield("", err) {
 				return
 			}
 		}

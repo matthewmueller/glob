@@ -1,6 +1,7 @@
 package globfs_test
 
 import (
+	"fmt"
 	"testing"
 	"testing/fstest"
 
@@ -27,6 +28,21 @@ func TestGlob(t *testing.T) {
 	is.Equal(files[2], "qux.markdown")
 	is.Equal(files[3], "sub/deep/topic.md")
 	is.Equal(files[4], "sub/topic.md")
+
+	files, err = globfs.Glob(fsys, "foo.md", "bar.md")
+	is.NoErr(err)
+	is.Equal(files, []string{"bar.md", "foo.md"})
+}
+
+func TestGlobNoPatterns(t *testing.T) {
+	is := is.New(t)
+	fsys := fstest.MapFS{}
+	files, err := globfs.Glob(fsys)
+	is.NoErr(err)
+	is.Equal(files, []string(nil))
+	files, err = globfs.Glob(fsys, "")
+	is.NoErr(err)
+	is.Equal(files, []string(nil))
 }
 
 func TestNested(t *testing.T) {
@@ -52,4 +68,25 @@ func TestNested(t *testing.T) {
 	is.Equal(files[0], "lib/App.svelte")
 	is.Equal(files[1], "lib/src/App.svelte")
 	is.Equal(files[2], "lib/src/shared.svelte.js")
+}
+
+func ExampleGlob() {
+	fsys := fstest.MapFS{
+		"posts/first.md":  &fstest.MapFile{Data: []byte("first")},
+		"posts/second.md": &fstest.MapFile{Data: []byte("second")},
+		"posts/draft.txt": &fstest.MapFile{Data: []byte("draft")},
+	}
+
+	files, err := globfs.Glob(fsys, "posts/*.md")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for _, file := range files {
+		fmt.Println(file)
+	}
+
+	// Output:
+	// posts/first.md
+	// posts/second.md
 }

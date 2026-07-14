@@ -22,7 +22,7 @@ func TestWalkFS(t *testing.T) {
 		"sub/deep/topic.md": &fstest.MapFile{Data: []byte("deep")},
 	}
 	files := []string{}
-	for err, file := range globfs.Walk(fsys, "**.{md,markdown}") {
+	for file, err := range globfs.Walk(fsys, "**.{md,markdown}") {
 		is.NoErr(err)
 		files = append(files, file)
 	}
@@ -46,7 +46,7 @@ func TestWalkBaseFS(t *testing.T) {
 		"sub/deep/topic.md": &fstest.MapFile{Data: []byte("deep")},
 	}
 	files := []string{}
-	for err, file := range globfs.Walk(fsys, "sub/**.{md,markdown}") {
+	for file, err := range globfs.Walk(fsys, "sub/**.{md,markdown}") {
 		is.NoErr(err)
 		files = append(files, file)
 	}
@@ -66,7 +66,7 @@ func TestWalkBreak(t *testing.T) {
 		"sub/topic.md":      &fstest.MapFile{Data: []byte("topic")},
 		"sub/deep/topic.md": &fstest.MapFile{Data: []byte("deep")},
 	}
-	for err, file := range globfs.Walk(fsys, "sub/**.{md,markdown}") {
+	for file, err := range globfs.Walk(fsys, "sub/**.{md,markdown}") {
 		is.NoErr(err)
 		if file == "foo.md" {
 			break
@@ -85,7 +85,7 @@ func TestWalkReturn(t *testing.T) {
 		"sub/topic.md":      &fstest.MapFile{Data: []byte("topic")},
 		"sub/deep/topic.md": &fstest.MapFile{Data: []byte("deep")},
 	}
-	for err, file := range globfs.Walk(fsys, "sub/**.{md,markdown}") {
+	for file, err := range globfs.Walk(fsys, "sub/**.{md,markdown}") {
 		is.NoErr(err)
 		if file == "foo.md" {
 			return
@@ -104,7 +104,8 @@ func TestWalkNone(t *testing.T) {
 		"sub/topic.md":      &fstest.MapFile{Data: []byte("topic")},
 		"sub/deep/topic.md": &fstest.MapFile{Data: []byte("deep")},
 	}
-	for err := range globfs.Walk(fsys, "notadir/**") {
+	for file, err := range globfs.Walk(fsys, "notadir/**") {
+		is.Equal(file, "")
 		is.True(errors.Is(err, fs.ErrNotExist))
 		break
 	}

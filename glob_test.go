@@ -21,42 +21,19 @@ func TestGlob(t *testing.T) {
 		"sub/topic.md":      "topic",
 		"sub/deep/topic.md": "deep",
 	})
-	files, err := glob.Glob(dir, "**.{md,markdown}")
+	pattern := filepath.Join(dir, "*.md")
+	want, err := filepath.Glob(pattern)
 	is.NoErr(err)
-	is.Equal(len(files), 5)
-	is.Equal(files[0], filepath.Join(dir, "bar.md"))
-	is.Equal(files[1], filepath.Join(dir, "foo.md"))
-	is.Equal(files[2], filepath.Join(dir, "qux.markdown"))
-	is.Equal(files[3], filepath.Join(dir, "sub/deep/topic.md"))
-	is.Equal(files[4], filepath.Join(dir, "sub/topic.md"))
+	got, err := glob.Glob(pattern)
+	is.NoErr(err)
+	is.Equal(got, want)
 }
 
-func TestGlobAbs(t *testing.T) {
-	is := is.New(t)
-	dir := t.TempDir()
-	writeFiles(t, dir, map[string]string{
-		"foo.md":            "foo",
-		"bar.md":            "bar",
-		"baz.txt":           "baz",
-		"qux.markdown":      "qux",
-		"quux.mdx":          "quux",
-		"sub/topic.md":      "topic",
-		"sub/deep/topic.md": "deep",
-	})
-	files, err := glob.Glob(string(filepath.Separator), filepath.Join(dir, "**.{md,markdown}"))
-	is.NoErr(err)
-	is.Equal(len(files), 5)
-	is.Equal(files[0], filepath.Join(dir, "bar.md"))
-	is.Equal(files[1], filepath.Join(dir, "foo.md"))
-	is.Equal(files[2], filepath.Join(dir, "qux.markdown"))
-	is.Equal(files[3], filepath.Join(dir, "sub/deep/topic.md"))
-	is.Equal(files[4], filepath.Join(dir, "sub/topic.md"))
-}
-
-func ExampleMatch() {
-	files, err := glob.Glob(".", "[A-Z]*.md")
+func ExampleGlob() {
+	files, err := glob.Glob("[A-Z]*.md")
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
 
 	for _, file := range files {
@@ -67,4 +44,59 @@ func ExampleMatch() {
 	// Changelog.md
 	// License.md
 	// Readme.md
+}
+
+func TestGlobNginx(t *testing.T) {
+	is := is.New(t)
+	dir := t.TempDir()
+	writeFiles(t, dir, map[string]string{
+		"nginx.http.conf":   "http {}",
+		"nginx.stream.conf": "stream {} ",
+	})
+	pattern := filepath.Join(dir, "nginx.*.conf")
+	want, err := filepath.Glob(pattern)
+	is.NoErr(err)
+	is.Equal(len(want), 2)
+	got, err := glob.Glob(pattern)
+	is.NoErr(err)
+	is.Equal(got, want)
+	multiple, err := glob.Glob(
+		filepath.Join(dir, "nginx.http.conf"),
+		filepath.Join(dir, "nginx.stream.conf"),
+	)
+	is.NoErr(err)
+	is.Equal(multiple, want)
+}
+
+func TestGlobMultipleBases(t *testing.T) {
+	is := is.New(t)
+	dir := t.TempDir()
+	writeFiles(t, dir, map[string]string{
+		"left/one.md":   "one",
+		"left/one.txt":  "one",
+		"right/two.md":  "two",
+		"right/two.txt": "two",
+	})
+	matches, err := glob.Glob(
+		filepath.Join(dir, "left/*.md"),
+		filepath.Join(dir, "right/*.txt"),
+	)
+	is.NoErr(err)
+	is.Equal(matches, []string{
+		filepath.Join(dir, "left/one.md"),
+		filepath.Join(dir, "right/two.txt"),
+	})
+}
+
+func TestGlobNoPatterns(t *testing.T) {
+	is := is.New(t)
+	matches, err := glob.Glob()
+	is.NoErr(err)
+	is.Equal(matches, nil)
+	matches, err = glob.Glob("")
+	is.NoErr(err)
+	is.Equal(matches, nil)
+	matches, err = filepath.Glob("")
+	is.NoErr(err)
+	is.Equal(matches, nil)
 }

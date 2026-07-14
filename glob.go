@@ -1,9 +1,10 @@
 package glob
 
-// Glob is conceptually similar to filepath.Glob, but it uses the glob package
-// from github.com/gobwas/glob, which supports more advanced globbing patterns.
-func Glob(dir string, patterns ...string) (matches []string, err error) {
-	for err, path := range Walk(dir, patterns...) {
+// Glob returns the union of files matching the complete patterns. It derives
+// the directory to walk from the non-pattern prefix shared by the patterns.
+// Empty patterns are ignored, and no patterns returns no matches.
+func Glob(patterns ...string) (matches []string, err error) {
+	for path, err := range Walk(patterns...) {
 		if err != nil {
 			return nil, err
 		}

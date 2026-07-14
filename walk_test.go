@@ -2,6 +2,7 @@ package glob_test
 
 import (
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -39,7 +40,7 @@ func TestWalk(t *testing.T) {
 		"sub/deep/topic.md": "deep",
 	})
 	files := []string{}
-	for err, file := range glob.Walk(dir, "**.{md,markdown}") {
+	for file, err := range glob.Walk(filepath.Join(dir, "**.{md,markdown}")) {
 		is.NoErr(err)
 		rel, err := filepath.Rel(dir, file)
 		is.NoErr(err)
@@ -65,7 +66,7 @@ func TestWalkBreak(t *testing.T) {
 		"sub/topic.md":      "topic",
 		"sub/deep/topic.md": "deep",
 	})
-	for err, file := range glob.Walk(dir, "**.{md,markdown}") {
+	for file, err := range glob.Walk(filepath.Join(dir, "**.{md,markdown}")) {
 		is.NoErr(err)
 		rel, err := filepath.Rel(dir, file)
 		is.NoErr(err)
@@ -87,7 +88,7 @@ func TestWalkReturn(t *testing.T) {
 		"sub/topic.md":      "topic",
 		"sub/deep/topic.md": "deep",
 	})
-	for err, file := range glob.Walk(dir, "**.{md,markdown}") {
+	for file, err := range glob.Walk(filepath.Join(dir, "**.{md,markdown}")) {
 		is.NoErr(err)
 		rel, err := filepath.Rel(dir, file)
 		is.NoErr(err)
@@ -109,8 +110,24 @@ func TestWalkNone(t *testing.T) {
 		"sub/topic.md":      "topic",
 		"sub/deep/topic.md": "deep",
 	})
-	for err := range glob.Walk(dir, "notadir/**") {
+	for file, err := range glob.Walk(filepath.Join(dir, "notadir/**")) {
+		is.Equal(file, "")
 		is.True(errors.Is(err, fs.ErrNotExist))
 		break
 	}
+}
+
+func ExampleWalk() {
+	for file, err := range glob.Walk("*.md", "docs/**/*.md") {
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+		fmt.Println(file)
+	}
+
+	// Output:
+	// Changelog.md
+	// License.md
+	// Readme.md
 }
